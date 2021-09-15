@@ -1,0 +1,74 @@
+version: '3.1'
+
+services:
+
+###########
+### PORTAINER
+###########
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer:/data
+#    networks:
+#      - web
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: 'Europe/Zurich'
+
+
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    networks:#      - wordpress
+#      - web
+    user: 1000:1000
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: sclkjoc3$L$dsi
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./html/:/var/www/html/
+      - ./php.ini:/usr/local/etc/php/conf.d/php.ini
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: sclkjoc3$L$dsi
+      MYSQL_RANDOM_ROOT_PASSWORD: Sunshine77
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - wordpress
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+#      - '1025:1025'
+      - '8025:8025'
+    networks:
+      - web
+  
+volumes:
+  wordpress:
+  db:
+  portainer:
+
+networks:
+  wordpress:
+    name: wordpress
+    external: false
+    internal: true
+  web:
+    name: web
+    external: true
