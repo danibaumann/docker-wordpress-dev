@@ -53,6 +53,20 @@ services:
       - wordpress
 
 ###########
+### PHPmyAdmin
+###########
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - '8888:80'
+    networks:
+      - web
+      - wordpress
+    environment:
+      PMA_ARBITRARY: 1
+
+###########
 ### Mailhog
 ###########
   mailhog:
